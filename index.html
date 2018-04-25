@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>N7K alternate ver.</title>
+	<style>
+		body {
+			background-color: skyBlue;
+		}
+		.container {
+			position: relative;
+			margin: auto;
+			width: 1366px;
+			height: 720px;
+		}
+
+		#canvas {
+			position: absolute;
+			display: block;
+			margin: auto;
+			border: 1px solid black;
+			background: url("map-indonesia.jpg");
+			background-size: cover;
+		}
+
+		table {
+			position: absolute;
+			background-color: rgba(0,0,0, 0.5);
+			left: 2%;
+			top: 55%;
+			display: none;
+		}
+
+		input[type=number] {
+			width: 70px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<canvas id="canvas" width="1366" height="720" onmousemove="mouseDetect(event)"></canvas>
+		<table id="table1">
+			<tbody>
+				<tr>
+					<td colspan="3">Kingdom A</td>
+				</tr>
+				<tr>
+					<td>Infantry: <div id="inf1Stock"></div></td>
+					<td>Cavalry: <div id="cav1Stock"></div></td>
+					<td>Air: <div id="air1Stock"></div></td>
+				</tr>
+				<tr>
+					<td>Infantry</td>
+					<td colspan="2"><input type="number" id="inf1" value="0" min="0" max="1000" step="10"></td>
+				</tr>
+				<tr>
+					<td>Cavalry</td>
+					<td colspan="2"><input type="number" id="cav1" value="0" min="0" max="1000" step="5"></td>
+				</tr>
+				<tr>
+					<td>Air</td>
+					<td colspan="2"><input type="number" id="air1" value="0" min="0" max="1000"></td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center"><button id="button1" onclick="send1()">Send</button></td>
+				</tr>
+			</tbody>
+		</table>
+		<table id="table2">
+			<tbody>
+				<tr>
+					<td colspan="3">Kingdom B</td>
+				</tr>
+				<tr>
+					<td>Infantry: <div id="inf2Stock"></div></td>
+					<td>Cavalry: <div id="cav2Stock"></div></td>
+					<td>Air: <div id="air2Stock"></div></td>
+				</tr>
+				<tr>
+					<td>Infantry</td>
+					<td colspan="2"><input type="number" id="inf2" value="0" min="0" max="1000" step="10"></td>
+				</tr>
+				<tr>
+					<td>Cavalry</td>
+					<td colspan="2"><input type="number" id="cav2" value="0" min="0" max="1000" step="5"></td>
+				</tr>
+				<tr>
+					<td>Air</td>
+					<td colspan="2"><input type="number" id="air2" value="0" min="0" max="1000"></td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center"><button id="button2" onclick="send2()">Send</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script>
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+		ctx.font = "30px Helvetica";
+		ctx.fillStyle = 'red';
+		var posX1 = 130;
+		var posY1 = 160;
+		var posX2 = 470;
+		var posY2 = 500;
+
+		ctx.fillText("+", posX1, posY1);
+		ctx.fillText("+", posX2, posY2);
+
+		function mouseDetect(event) {
+			if (400 < event.clientX && event.clientX < 415 && 145 < event.clientY && event.clientY < 165)
+				setTimeout(map1, 300);
+			if (740 < event.clientX && event.clientX < 753 && 482 < event.clientY && event.clientY < 505)
+				setTimeout(map2, 300);
+		}
+
+		function map1() {
+			document.getElementById("table1").style.display = "inline";
+			document.getElementById("table2").style.display = "none";
+		}
+
+		function map2() {
+			document.getElementById("table2").style.display = "inline";
+			document.getElementById("table1").style.display = "none";
+		}
+
+		var inf;
+		var cav;
+		var air;
+
+		function send1() {
+			inf = document.getElementById("inf1").value;
+			cav = document.getElementById("cav1").value;
+			air = document.getElementById("air1").value;
+			if(inf > 0 || cav > 0 || air > 0) {
+				startDraw1 = setInterval(drawLine, 10);
+			}
+
+			calculateTroops1();
+			
+			clearField();			
+		}
+
+		function drawLine() {
+				ctx.beginPath();
+				ctx.arc(posX2, posY2, 3, 0, Math.PI*2);
+				ctx.fill();
+				ctx.closePath();
+				posX2 -= 2;
+				posY2 -= 2;
+
+				check1(posX2, posY2, posX1, posY1);
+		}
+
+		function send2() {
+			inf = document.getElementById("inf2").value;
+			cav = document.getElementById("cav2").value;
+			air = document.getElementById("air2").value;
+			if(inf > 0 || cav >0 || air > 0) {
+				startDraw2 = setInterval(drawLine2, 10);
+			}
+
+			calculateTroops2();
+
+			clearField();			
+		}
+
+		function drawLine2() {
+			ctx.beginPath();
+			ctx.arc(posX1, posY1, 3, 0, Math.PI*2);
+			ctx.fill();
+			ctx.closePath();
+			posX1 += 2;
+			posY1 += 2;
+
+			check2(posX1, posY1, posX2, posY2);
+		}
+
+		function check1(a, b, c, d) {
+			if(a === c || b === d){
+				clearInterval(startDraw1);
+				posX1 = 130;
+				posY1 = 160;
+				posX2 = 470;
+				posY2 = 500;
+				setTimeout(function () {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.fillText("+", posX1, posY1);
+					ctx.fillText("+", posX2, posY2);
+				}, 1000);
+			}
+		}
+
+		function check2(a, b, c, d) {
+			if(a === c || b === d){
+				clearInterval(startDraw2);
+				posX1 = 130;
+				posY1 = 160;
+				posX2 = 470;
+				posY2 = 500;
+				setTimeout(function() {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.fillText("+", posX1, posY1);
+					ctx.fillText("+", posX2, posY2);
+				}, 1000);
+			}
+		}
+
+		function clearField() {
+			if(inf===document.getElementById('inf1').value){
+				document.getElementById("inf1").value = 0;
+				document.getElementById("cav1").value = 0;
+				document.getElementById("air1").value = 0;	
+			}	
+			else {
+				document.getElementById("inf2").value = 0;
+				document.getElementById("cav2").value = 0;
+				document.getElementById("air2").value = 0;							
+			}		
+		}
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("GET", "kingdom1troops.txt", true);
+		xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200) {
+				troopsA = xhttp.responseText;
+				split(troopsA)
+			}
+		}
+		xhttp.send();
+
+		function split(troopsA) {
+			troops1 = troopsA.split(" ");
+			troops1[0] = Number(troops1[0]);
+			troops1[1] = Number(troops1[1]);
+			troops1[2] = Number(troops1[2]);
+			document.getElementById('inf1Stock').innerHTML = troops1[0];
+			document.getElementById('cav1Stock').innerHTML = troops1[1];
+			document.getElementById('air1Stock').innerHTML = troops1[2];
+		}
+
+		var xhttp2 = new XMLHttpRequest();
+		xhttp2.open("GET", "kingdom2troops.txt", true);
+		xhttp2.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200) {
+				troopsB = xhttp2.responseText;
+				split2(troopsB)
+			}
+		}		
+		xhttp2.send();
+
+		function split2(troopsB) {
+			troops2 = troopsB.split(" ");
+			troops2[0] = Number(troops2[0]);
+			troops2[1] = Number(troops2[1]);
+			troops2[2] = Number(troops2[2]);
+			document.getElementById('inf2Stock').innerHTML = troops2[0];
+			document.getElementById('cav2Stock').innerHTML = troops2[1];
+			document.getElementById('air2Stock').innerHTML = troops2[2];
+		}
+
+		function calculateTroops1() {
+			troops1[0] -= document.getElementById('inf1').value;
+			document.getElementById('inf1Stock').innerHTML = troops1[0];
+			troops1[1] -= document.getElementById('cav1').value;
+			document.getElementById('cav1Stock').innerHTML = troops1[1];
+			troops1[2] -= document.getElementById('air1').value;
+			document.getElementById('air1Stock').innerHTML = troops1[2];
+
+			troopsRegen1();
+		}
+
+		function calculateTroops2() {
+			troops2[0] -= document.getElementById('inf2').value;
+			document.getElementById('inf2Stock').innerHTML = troops2[0];
+			troops2[1] -= document.getElementById('cav2').value;
+			document.getElementById('cav2Stock').innerHTML = troops2[1];
+			troops2[2] -= document.getElementById('air2').value;
+			document.getElementById('air2Stock').innerHTML = troops2[2];
+
+			troopsRegen2();
+		}
+		
+		function troopsRegen1() {
+			if(troops1[0] < 1000){
+				regen1 = setInterval(function() {
+					troops1[0] += 10;
+					document.getElementById('inf1Stock').innerHTML = troops1[0];
+					if(troops1[0] >= 1000){
+						clearInterval(regen1);
+					}
+				}, 3000);					
+			}
+			if(troops1[1] < 1000){
+				regen2 = setInterval(function() {
+					troops1[1] += 5;
+					document.getElementById('cav1Stock').innerHTML = troops1[1];
+					if(troops1[1] >= 1000){
+						clearInterval(regen2);
+					}
+				}, 3000);					
+			}
+			if(troops1[2] < 1000){
+				regen3 = setInterval(function() {
+					troops1[2] += 1;
+					document.getElementById('air1Stock').innerHTML = troops1[2];
+					if(troops1[2] >= 1000){
+						clearInterval(regen3);
+					}
+				}, 3000);					
+			}				
+		}
+
+		function troopsRegen2() {
+			if(troops2[0] < 1000){
+				regen1 = setInterval(function() {
+					troops2[0] += 10;
+					document.getElementById('inf2Stock').innerHTML = troops2[0];
+					if(troops2[0] >= 1000){
+						clearInterval(regen1);
+					}
+				}, 3000);					
+			}
+			if(troops2[1] < 1000){
+				regen2 = setInterval(function() {
+					troops2[1] += 5;
+					document.getElementById('cav2Stock').innerHTML = troops2[1];
+					if(troops2[1] >= 1000){
+						clearInterval(regen2);
+					}
+				}, 3000);					
+			}
+			if(troops2[2] < 1000){
+				regen3 = setInterval(function() {
+					troops2[2] += 1;
+					document.getElementById('air2Stock').innerHTML = troops2[2];
+					if(troops2[2] >= 500){
+						clearInterval(regen3);
+					}
+				}, 3000);					
+			}				
+		}
+	</script>
+</body>
+</html>
