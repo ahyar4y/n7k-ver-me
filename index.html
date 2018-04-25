@@ -5,7 +5,7 @@
 	<title>N7K alternate ver.</title>
 	<style>
 		body {
-			background-color: skyBlue;
+			background-color: lightGreen;
 		}
 		.container {
 			position: relative;
@@ -98,7 +98,6 @@
 		var canvas = document.getElementById("canvas");
 		var ctx = canvas.getContext("2d");
 		ctx.font = "30px Helvetica";
-		ctx.fillStyle = 'red';
 		var posX1 = 130;
 		var posY1 = 160;
 		var posX2 = 470;
@@ -108,9 +107,9 @@
 		ctx.fillText("+", posX2, posY2);
 
 		function mouseDetect(event) {
-			if (400 < event.clientX && event.clientX < 415 && 145 < event.clientY && event.clientY < 165)
+			if (405 < event.clientX && event.clientX < 425 && 145 < event.clientY && event.clientY < 167)
 				setTimeout(map1, 300);
-			if (740 < event.clientX && event.clientX < 753 && 482 < event.clientY && event.clientY < 505)
+			if (745 < event.clientX && event.clientX < 765 && 488 < event.clientY && event.clientY < 505)
 				setTimeout(map2, 300);
 		}
 
