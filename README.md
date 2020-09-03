@@ -1,3 +1,3 @@
-# n7k-ver-me
+# n7k-ver-me (CSIP final test)
 
-*idk wtf even is this lmao
+*I honestly don't have any idea what the heck is this
